@@ -8,20 +8,49 @@ const LoginPage = () => {
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
 
+  const loginSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await authApi.post("/login", {
+        id,
+        password,
+      });
+      if (data.success) {
+        console.log("로그인완료");
+        localStorage.setItem("userId", id);
+        localStorage.setItem("password", password);
+        localStorage.setItem("accessToken", data.accessToken);
+        navigate("/");
+        return { data };
+      }
+    } catch (error) {
+      alert("존재하지않는 유저입니다");
+      console.log(error);
+    }
+  };
+
   return (
     <div>
       <h1>Login</h1>
       <p>Login page</p>
 
-      <form onSubmit={async (e) => {}}>
+      <form onSubmit={loginSubmit}>
         <div>
           <label htmlFor="id">id</label>
-          <input />
+          <input
+            type="text"
+            value={id}
+            onChange={(e) => setId(e.target.value)}
+          />
         </div>
 
         <div>
           <label htmlFor="password">Password</label>
-          <input />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </div>
 
         <button type="submit">Login</button>
